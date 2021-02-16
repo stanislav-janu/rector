@@ -14,6 +14,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\UnionType;
+use PHPStan\Type\Type;
 use Rector\CodingStyle\ValueObject\ObjectMagicMethods;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\PhpVersionFeature;
@@ -137,7 +138,7 @@ CODE_SAMPLE
             if ($returnedExpr instanceof MethodCall || $returnedExpr instanceof StaticCall || $returnedExpr instanceof FuncCall) {
                 if ($returnedExpr instanceof MethodCall) {
                     $returnNode = $this->resolveMethodCallReturnNode($returnedExpr);
-                    if ($returnNode === null) {
+                    if (! $returnNode instanceof Node) {
                         return [];
                     }
 
@@ -146,7 +147,7 @@ CODE_SAMPLE
 
                 if ($returnedExpr instanceof StaticCall) {
                     $returnNode = $this->resolveStaticCallReturnNode($returnedExpr);
-                    if ($returnNode === null) {
+                    if (! $returnNode instanceof Node) {
                         return [];
                     }
 
@@ -155,7 +156,7 @@ CODE_SAMPLE
 
                 if ($returnedExpr instanceof FuncCall) {
                     $returnNode = $this->resolveFuncCallReturnNode($returnedExpr);
-                    if ($returnNode === null) {
+                    if (! $returnNode instanceof Node) {
                         return [];
                     }
 
@@ -175,7 +176,7 @@ CODE_SAMPLE
         }
 
         $returnType = $this->reflectionTypeResolver->resolveMethodCallReturnType($methodCall);
-        if ($returnType === null) {
+        if (! $returnType instanceof Type) {
             return null;
         }
 
@@ -190,14 +191,14 @@ CODE_SAMPLE
         }
 
         $returnType = $this->reflectionTypeResolver->resolveStaticCallReturnType($staticCall);
-        if ($returnType === null) {
+        if (! $returnType instanceof Type) {
             return null;
         }
 
         return $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($returnType);
     }
 
-    private function resolveFuncCallReturnNode(FuncCall $funcCall): ?\PhpParser\Node
+    private function resolveFuncCallReturnNode(FuncCall $funcCall): ?Node
     {
         $function = $this->nodeRepository->findFunctionByFuncCall($funcCall);
         if ($function instanceof Function_) {
@@ -205,7 +206,7 @@ CODE_SAMPLE
         }
 
         $returnType = $this->reflectionTypeResolver->resolveFuncCallReturnType($funcCall);
-        if ($returnType === null) {
+        if (! $returnType instanceof Type) {
             return null;
         }
 

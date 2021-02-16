@@ -212,7 +212,7 @@ CODE_SAMPLE
     /**
      * @return ClassConstFetch|LNumber
      */
-    private function convertNumberToConstant(LNumber $lNumber)
+    private function convertNumberToConstant(LNumber $lNumber): ClassConstFetch
     {
         if (! isset(self::CODE_TO_CONST[$lNumber->value])) {
             return $lNumber;

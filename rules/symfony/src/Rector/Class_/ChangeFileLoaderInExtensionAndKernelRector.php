@@ -123,7 +123,7 @@ CODE_SAMPLE
         $this->traverseNodesWithCallable($node->stmts, function (Node $node) use (
             $oldFileLoaderClass,
             $newFileLoaderClass
-        ) {
+        ): ?Node {
             if ($node instanceof New_) {
                 if (! $this->isName($node->class, $oldFileLoaderClass)) {
                     return null;
